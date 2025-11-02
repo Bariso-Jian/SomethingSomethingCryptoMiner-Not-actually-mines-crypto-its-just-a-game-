@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clicker</title>
+
+    <style>
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            margin: 0;
+        }
+
+        body {
+            background-color: rgb(37, 37, 37);
+            transition: background-color 0.4s ease-out;
+        }
+
+        header {
+            background-color: rgb(20, 20, 20);
+            padding: 0.4rem 4%;
+            display: flex;
+            justify-content: space-between;
+            position: sticky;
+            z-index: 999;
+            top: 0;
+            opacity: 0.8;
+        }
+
+        header h1 {
+            font-weight: 800;
+            font-size: clamp(1.5rem, 4vw, 2.4rem);
+            color: rgb(253, 255, 239);
+        }
+
+        header h2 {
+            font-weight: 700;
+            font-size: clamp(1rem, 3vw, 1.7rem);
+            color: rgb(253, 255, 239);
+        }
+
+        .infoCoin {
+            border: 6px solid rgb(39, 39, 39);
+            border-radius: 12px;
+            background-color: rgb(37, 37, 37);
+            width: 90%;
+            max-width: 1200px;
+            height: auto;
+            margin: 1.6rem auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            box-shadow: 0px 0px 20px 7px #000000;
+        }
+
+        .visuals, .statsInfo {
+            flex: 1 1 300px;
+            margin: 1rem;
+            text-align: center;
+            height: auto;
+        }
+
+        .visuals {
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            height: 31.25rem;
+            width: 31.25rem;
+            background-color: rgb(22, 22, 22);
+        }
+
+        .statsInfo {
+            color: white;
+            letter-spacing: 2px;
+            margin: auto;
+        }
+
+        .statsInfo h2 {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+        }
+
+        .statsInfo h3 {
+            font-size: clamp(1rem, 2.5vw, 1.6rem);
+        }
+
+        .statsInfo p {
+            font-size: clamp(0.8rem, 2vw, 1.2rem);
+        }
+
+        .coinButtons {
+            display: inline-block;
+        }
+
+        #theCoin {
+            padding: 6% 0;
+            width: 80%;
+            height: 50%;
+        }
+
+        #start {
+            padding: 2% 3%;
+            background-color: rgb(70, 70, 70);
+            color: rgb(253, 255, 239);
+            border-radius: 12px;
+            border: none;
+            font-size: 2rem;
+            transform: translateY(0);
+            transition: background-color 0.5s ease-out;
+            margin: 3%;
+        }
+
+        #start:hover {
+            background-color: rgb(49, 51, 43);
+            cursor: pointer;
+        }
+
+        #start:active {
+            background-color: rgb(81, 95, 37);
+            transform: translateY(5px);
+            transition: none;
+        }
+
+        #convert {
+            padding: 2% 3%;
+            background-color: rgb(43, 61, 37);
+            color: rgb(253, 255, 239);
+            border-radius: 12px;
+            border: none;
+            font-size: 2rem;
+            transform: translateY(0);
+            transition: background-color 0.5s ease-out;
+        }
+
+        #convert:hover {
+            background-color: rgb(70, 97, 60);
+            cursor: pointer;
+        }
+
+        #convert:active {
+            background-color: rgb(79, 172, 60);
+            transform: translateY(5px);
+            transition: none;
+        }
+
+        #headerButtons {
+            display: flex;
+            margin: 0.2rem 3%;
+        }
+
+        #upgrades {
+            padding: 1.2rem 22%;
+            border: none;
+            border-bottom: 5px solid rgb(91, 92, 27);
+            border-radius: 12px;
+            background-color: rgb(252, 255, 95);
+            color: rgb(15, 20, 0);
+            font-size: 1.45rem;
+            font-weight: 650;
+            transform: translateY(0);
+        }
+
+        #upgrades:hover {
+            background-color: rgb(253, 255, 129);
+        }
+
+        #upgrades:active {
+            background-color: rgb(124, 124, 57);
+            transform: translateY(3px);
+            border-bottom: none;
+        }
+
+        #buyRAM {
+            font-weight: 600;
+            font-size: 1.6rem;
+            color: white;
+            background-color:rgb(71, 143, 113);
+            border: none;
+            border-radius: 12px;
+            transition: background-color 0.5s ease-out;
+            transform: translateY(0);
+            padding: 0.3rem 1rem;
+        }
+
+        #buyRAM:hover {
+            background-color:rgb(94, 192, 151);
+        }
+
+        #buyRAM:active {
+            background-color:rgb(156, 255, 214);
+            transform: translateY(5px);
+        }
+
+        #buyPSU {
+            font-weight: 600;
+            font-size: 1.6rem;
+            color: white;
+            background-color:rgb(71, 143, 113);
+            border: none;
+            border-radius: 12px;
+            transition: background-color 0.5s ease-out;
+            transform: translateY(0);
+            padding: 0.3rem 1rem;
+        }
+
+        #buyPSU:hover {
+            background-color:rgb(94, 192, 151);
+        }
+
+        #buyPSU:active {
+            background-color:rgb(156, 255, 214);
+            transform: translateY(5px);
+        }
+
+        #evilGlunguy {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            display: none;
+            z-index: 1001;
+        }
+
+        .upgradeGUI {
+            width: 85%;
+            height: 70%;
+            background-color: rgb(34, 31, 25);
+            border-radius: 16px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            
+            display: none;
+            opacity: 0;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 1rem;
+            
+            transition: opacity 0.2s ease-in, transform 0.3s ease-in;
+        }
+
+        .upgradeOptions {
+            margin: 0.5rem 2%;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        .upgradings {
+            background-color: rgb(24, 21, 16);
+            color: white;
+            width: 30%;
+            height: 22rem;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .upgradeInfo {
+            padding: 0.7rem;
+            letter-spacing: 0.1rem;
+        }
+
+        .price {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: rgb(75, 255, 99);
+        }
+
+        .upgradeImgs {
+            width: 4rem;
+            height: 4rem;
+        }
+
+        .goBack {
+            background-color: rgb(82, 83, 22);
+            color: rgb(222, 230, 193);
+            font-size: 2rem;
+            font-weight: 600;
+            border: none;
+            border-bottom: 3px solid rgb(252, 255, 95);
+            border-radius: 12px;
+            padding: 0.2rem 3%;
+        }
+
+        .goBack:hover {
+            background-color: rgb(118, 119, 34);
+            cursor: pointer
+        }
+
+        @media (max-width: 900px) {
+            .infoCoin {
+                flex-direction: column;
+                align-items: center;
+                height: auto;
+            }
+
+            .statsInfo, .visuals {
+                width: 90%;       /* fill container */
+                margin: 0.5rem 0;
+            }
+
+            #headerButtons {
+                flex-direction: column;
+            }
+
+            #start, #convert {
+                width: 80%;
+                font-size: 1.5rem;
+                margin: 1rem 0;
+            }
+
+            .upgradeGUI {
+                width: 90%;
+                max-width: 600px;
+            }
+
+            .upgradeOptions {
+                flex-direction: column;    /* stack on small screens */
+            }
+
+            .upgradings {
+                width: 90%;
+                margin: 1rem 0;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <h1>[B M S] 🪙</h1>
+            <h2>(Bitcoin Mining Simulator)</h2>
+        </div>
+
+        <div id="headerButtons">
+            <button id="upgrades">Upgrades</button>
+        </div>
+    </header>
+
+    <img src="EVIL glunguy.jpg" id="evilGlunguy" alt="AHHHHHHHHHHHHHHHHHHHHHHHHHHHHH">
+
+    <div class="upgradeGUI">
+        <button class="goBack">Go back</button>
+        <h2 id="moneyAmount">0</h2>
+        <div class="upgradeOptions">
+            <div class="upgradings">
+                <img src="RAM.png" alt="Ram" class="upgradeImgs">
+                <h2>+1gb of RAM</h2>
+                <p class="upgradeInfo">Add ram to your PC, increasing the memory storage to store data and <u>increasing the amount of bitcoin mined!</u></p>
+                <p class="price">0</p>
+                <button id="buyRAM">BUY!</button>
+            </div>
+
+            <div class="upgradings">
+                <img src="PSU.png" alt="Power Supply" class="upgradeImgs">
+                <h2>Upgrade PSU</h2>
+                <p class="upgradeInfo">More watts mean more strength! <u>Decreases work speed, though may heat faster!</u></p>
+                <p class="price">0</p>
+                <button id="buyPSU">BUY!</button>
+            </div>
+        </div>
+    </div>
+
+    <h3>(this is not final btw, expect bugs and glitches)</h3>
+
+    <div class="infoCoin">
+        <div class="statsInfo">
+            <h2>Mining bitcoin:</h2>
+            <p data-name="status">OFFLINE</p>
+            <h2>Bitcoins mined:</h2>
+            <p data-name="bitcoinAmount">0</p>
+            <h2>Dollars earned:</h2>
+            <p data-name="dollars">0</p>
+            <h3>Current work speed (1000 = 1 second):</h3>
+            <p data-name="speed">1000</p>
+            <h3>Amount of dollars earned per second:</h3>
+            <p data-name="btcPerSec">0.05</p>
+        </div>
+
+        <div class="visuals">
+            <img src="Laptop-offline.png" alt="THE COIN." id="theCoin">
+            <br>
+            <div class="coinButtons">
+                <button id="start">Start mining!</button>
+                <button id="convert">Convert!</button>
+            </div>
+        </div>
+
+        <div class="statsInfo">
+            <h2>Build temperature(°C):</h2>
+            <p data-name="temp">30</p>
+            <h2>Wifi speed in ms:</h2>
+            <p data-name="wifiSpeed">0</p>
+            <h2>RAM:</h2>
+            <p data-name="dollars">16GB</p>
+        </div>
+    </div>
+
+    <script>
+        let time = 0;
+
+        const body = document.body
+
+        const upgradeButton = document.getElementById('upgrades');
+        const upgradeGooi = document.querySelector('.upgradeGUI');
+        const goBack = document.querySelector('.goBack');
+
+        const startButton = document.getElementById('start');
+        const convertButton = document.getElementById('convert');
+        const ramButton = document.getElementById('buyRAM');
+        const psuButton = document.getElementById('buyPSU');
+
+        const laptopImg = document.getElementById('theCoin');
+
+        const btcPerSec = document.querySelector('[data-name="btcPerSec"]');
+        const status = document.querySelector('[data-name="status"]');
+        const bitcoinAmount = document.querySelector('[data-name="bitcoinAmount"]');
+        const dollarsEarned = document.querySelector('[data-name="dollars"]');
+        const speedNumber = document.querySelector('[data-name="speed"]');
+
+        const currentPrice = document.querySelectorAll('.price');
+
+        const pcTemp = document.querySelector('[data-name="temp"]');
+
+        const evil = document.getElementById('evilGlunguy');
+
+        const running = new Audio('Running.mp3');
+        const mining = new Audio('MiningSound.mp3');
+        const ding = new Audio('DING.mp3');
+        const paid = new Audio('Paid.mp3');
+        const unpaid = new Audio('notPaid.mp3')
+        const evilAudio = new Audio('AHHHHHHHHHHHH.mp3');
+        running.volume = 0.3;
+        mining.loop = true;
+
+        let isMining = false;
+
+        let priceRAM = 2.99;
+        let pricePSU = 5.99;
+
+        let tempCooldown = 3500;
+        let speedDuration = parseFloat(speedNumber.textContent);
+
+        function saveGame() {
+            const saveData = {
+                dollars: parseFloat(dollarsEarned.textContent),
+                bitcoin: parseFloat(bitcoinAmount.textContent),
+                btcPerSec: parseFloat(btcPerSec.textContent),
+                priceRAM: priceRAM,
+                pricePSU: pricePSU,
+            };
+
+            localStorage.setItem("saveData", JSON.stringify(saveData));
+            console.log("Game saved!", saveData);
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem("saveData");
+            if (saved) {
+                const data = JSON.parse(saved);
+
+                dollarsEarned.textContent = data.dollars.toFixed(2);
+                bitcoinAmount.textContent = data.bitcoin.toFixed(2);
+                btcPerSec.textContent = data.btcPerSec.toFixed(2);
+                priceRAM = data.priceRAM || 1.00;
+                pricePSU = data.pricePSU || 1.00;
+
+                console.log("Game loaded!", data);
+            } else {
+                console.log("No save data found, starting fresh!");
+            }
+        }
+
+        loadGame();
+
+        setInterval(saveGame, 1000);
+
+        startButton.addEventListener("click", () => {
+            if (isMining) return;
+            isMining = true;
+
+            laptopImg.src = 'Laptop-active.png';
+            body.style.backgroundColor = "rgb(59, 63, 40)";
+
+            status.textContent = "ACTIVE";
+            status.style.color = "green";
+
+            const loop = setInterval(() => {
+                time++;
+
+                const mined = Number(btcPerSec.textContent);
+                const current = Number(bitcoinAmount.textContent);
+                bitcoinAmount.textContent = (current + mined).toFixed(2);
+                running.play();
+                mining.play();
+
+                if (time >= 60) {
+                    clearInterval(loop);
+                    time = 0;
+                    body.style.backgroundColor = "rgb(37, 37, 37)";
+                    running.pause();
+                    running.currentTime = 0;
+                    isMining = false;
+                    mining.pause();
+                }
+            }, speedDuration)
+
+            const tempUpdate = setInterval(() => {
+                let tempText = Number(pcTemp.textContent);
+                if (isMining) {
+                    tempText += 1;
+                    tempText = Math.min(tempText, 100);
+
+                    pcTemp.textContent = tempText;
+
+                    if (tempText === 40) {
+                        pcTemp.style.color = 'rgba(255, 228, 228, 0.8)';
+                    }
+
+                    if (tempText === 50) {
+                        pcTemp.style.color = 'rgba(255, 187, 187, 0.8)';
+                    }
+
+                    if (tempText === 70) {
+                        pcTemp.style.color = 'rgba(207, 85, 85, 0.8)';
+                    }
+
+                    if (tempText === 90) {
+                        pcTemp.style.color = 'rgba(255, 0, 0, 0.8)';
+                    }
+
+                    if (tempText === 100) {
+                        evil.style.display = 'block';
+                        evilAudio.play();
+                        setTimeout(() => {
+                            evil.style.display = 'none';
+                        }, 5000)
+                    }
+                } else {
+                    tempText -= 1;
+                    tempText = Math.max(tempText, 30);
+
+                    pcTemp.textContent = tempText;
+                }
+            }, tempCooldown)
+        });
+
+        convertButton.addEventListener("click", () => {
+            const current = parseFloat(bitcoinAmount.textContent) || 0;
+            const converted = Math.round(current * 0.4 * 100) / 100;
+
+            const previous = parseFloat(dollarsEarned.textContent) || 0;
+            const newTotal = Math.round((previous + converted) * 100) / 100;
+
+            dollarsEarned.textContent = newTotal.toFixed(2);
+            ding.play();
+
+            setTimeout(() => {
+                bitcoinAmount.textContent = "0.00";
+            }, 50);
+        });
+
+        upgradeButton.addEventListener("click", () => {
+            upgradeGooi.style.display = "flex";
+            setTimeout(() => {
+                upgradeGooi.style.opacity = "1";
+                upgradeGooi.style.transform = "translate(-50%, -45%)";
+            }, 100)
+        });
+
+        ramButton.addEventListener("click", () => {
+            let moneyAmount = parseFloat(dollarsEarned.textContent);
+            const mined = Number(btcPerSec.textContent);
+
+            if (moneyAmount >= priceRAM) {
+                paid.play()
+                dollarsEarned.textContent = (moneyAmount - 1).toFixed(2);
+
+                btcPerSec.textContent = (mined + 0.05).toFixed(2);
+
+                priceRAM += (priceRAM * 1.4);
+            } else {
+                unpaid.play()
+            };
+        });
+
+        psuButton.addEventListener("click", () => {
+            let moneyAmount = parseFloat(dollarsEarned.textContent);
+            const mined = Number(btcPerSec.textContent);
+
+            if (moneyAmount >= pricePSU) {
+                paid.play()
+                dollarsEarned.textContent = (moneyAmount - 1).toFixed(2);
+
+                speedDuration -= 50;
+                speedNumber.textContent -= 50;
+                tempCooldown -= 250;
+
+                pricePSU += (pricePSU * 1.4);
+            } else {
+                unpaid.play()
+            };
+        });
+
+        setInterval(() => {
+            currentPrice[0].textContent = priceRAM.toFixed(2);
+            currentPrice[1].textContent = pricePSU.toFixed(2);
+        }, 1000);
+
+        goBack.addEventListener("click", () => {
+            upgradeGooi.style.display = "none";
+            upgradeGooi.style.opacity = "0";
+            upgradeGooi.style.transform = "translate(-50%, -50%)";
+        });
+    </script>
+</body>
+</html>
